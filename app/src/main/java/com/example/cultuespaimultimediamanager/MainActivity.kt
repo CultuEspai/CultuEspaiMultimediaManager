@@ -7,6 +7,7 @@ import android.media.MediaRecorder
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,10 +26,30 @@ class MainActivity : AppCompatActivity() {
     private lateinit var videoUri: Uri
     private var audioFile: File? = null
     private var mediaRecorder: MediaRecorder? = null
+    private val fullMediaList = mutableListOf<MediaFile>()
     private val mediaList = mutableListOf<MediaFile>()
     private lateinit var adapter: MediaAdapter
 
     private var permissionCallback: (() -> Unit)? = null
+
+    private val pickMediaLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == RESULT_OK && it.data != null) {
+            val clipData = it.data!!.clipData
+            val singleUri = it.data!!.data
+
+            if (clipData != null) {
+                for (i in 0 until clipData.itemCount) {
+                    val uri = clipData.getItemAt(i).uri
+                    addUriToMediaList(uri)
+                }
+            } else if (singleUri != null) {
+                addUriToMediaList(singleUri)
+            }
+
+            adapter.notifyDataSetChanged()
+        }
+    }
+
 
     private val requestPermissionsLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -41,17 +62,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun filterMedia(type: MediaType?) {
+        mediaList.clear()
+        if (type == null) {
+            mediaList.addAll(fullMediaList)
+        } else {
+            mediaList.addAll(fullMediaList.filter { it.type == type })
+        }
+        adapter.notifyDataSetChanged()
+    }
+
     private val takePhotoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
-            mediaList.add(MediaFile(photoUri.toString(), MediaType.PHOTO))
+            val media = MediaFile(photoUri.toString(), MediaType.PHOTO)
+            fullMediaList.add(media)
+            mediaList.add(media)
             adapter.notifyItemInserted(mediaList.size - 1)
+
+            saveMediaListToStorage()
         }
     }
 
     private val recordVideoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
-            mediaList.add(MediaFile(videoUri.toString(), MediaType.VIDEO))
+            val media = MediaFile(videoUri.toString(), MediaType.VIDEO)
+            fullMediaList.add(media)
+            mediaList.add(media)
             adapter.notifyItemInserted(mediaList.size - 1)
+
+            saveMediaListToStorage()
         }
     }
 
@@ -59,19 +98,93 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        loadMediaListFromStorage()
+
         val photoButton = findViewById<ImageView>(R.id.navPhotoIcon)
         val videoButton = findViewById<ImageView>(R.id.navVideoIcon)
         val audioButton = findViewById<ImageView>(R.id.navAudioIcon)
+        val filesButton = findViewById<ImageView>(R.id.navFilesIcon)
+
+        val allButton = findViewById<Button>(R.id.allFilterButton)
+        val photoFilterButton = findViewById<Button>(R.id.photoFilterButton)
+        val videoFilterButton = findViewById<Button>(R.id.videoFilterButton)
+        val audioFilterButton = findViewById<Button>(R.id.audioFilterButton)
 
         photoButton.setOnClickListener { capturePhoto() }
         videoButton.setOnClickListener { captureVideo() }
         audioButton.setOnClickListener { recordAudio() }
+        filesButton.setOnClickListener { openDeviceGallery() }
+
+        allButton.setOnClickListener { filterMedia(null) }
+        photoFilterButton.setOnClickListener { filterMedia(MediaType.PHOTO) }
+        videoFilterButton.setOnClickListener { filterMedia(MediaType.VIDEO) }
+        audioFilterButton.setOnClickListener { filterMedia(MediaType.AUDIO) }
 
         adapter = MediaAdapter(this, mediaList)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewFiles)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
     }
+
+    private fun openDeviceGallery() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "*/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            addCategory(Intent.CATEGORY_OPENABLE)
+        }
+        pickMediaLauncher.launch(Intent.createChooser(intent, "Selecciona una imatge o vídeo"))
+    }
+
+    private fun addUriToMediaList(uri: Uri) {
+        val mimeType = contentResolver.getType(uri)
+        val mediaType = when {
+            mimeType?.startsWith("image") == true -> MediaType.PHOTO
+            mimeType?.startsWith("video") == true -> MediaType.VIDEO
+            else -> null
+        }
+
+        mediaType?.let {
+            val media = MediaFile(uri.toString(), it)
+            fullMediaList.add(media)
+            mediaList.add(media)
+        }
+    }
+    private fun loadMediaListFromStorage() {
+        val sharedPrefs = getSharedPreferences("media_storage", MODE_PRIVATE)
+        val jsonList = sharedPrefs.getString("media_list", "") ?: ""
+
+        if (jsonList.isNotEmpty()) {
+            val items = jsonList.split("||")
+            for (item in items) {
+                val parts = item.split("##")
+                if (parts.size == 2) {
+                    val uri = parts[0]
+                    val type = when (parts[1]) {
+                        "PHOTO" -> MediaType.PHOTO
+                        "VIDEO" -> MediaType.VIDEO
+                        "AUDIO" -> MediaType.AUDIO
+                        else -> null
+                    }
+                    type?.let {
+                        val media = MediaFile(uri, it)
+                        fullMediaList.add(media)
+                        mediaList.add(media)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun saveMediaListToStorage() {
+        val sharedPrefs = getSharedPreferences("media_storage", MODE_PRIVATE)
+        val editor = sharedPrefs.edit()
+
+        val jsonList = fullMediaList.joinToString("||") { "${it.uri}##${it.type}" }
+        editor.putString("media_list", jsonList)
+        editor.apply()
+    }
+
 
     private fun capturePhoto() {
         checkAndRequestPermissions {
@@ -118,8 +231,13 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Audio grabado", Toast.LENGTH_SHORT).show()
 
                 val audioUri = Uri.fromFile(audioFile)
-                mediaList.add(MediaFile(audioUri.toString(), MediaType.AUDIO))
+                val media = MediaFile(audioUri.toString(), MediaType.AUDIO)
+                fullMediaList.add(media)
+                mediaList.add(media)
                 adapter.notifyItemInserted(mediaList.size - 1)
+
+                saveMediaListToStorage()
+
             }, 5000)
         }
     }
