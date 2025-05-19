@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/imagePreview"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
+    <VideoView
+        android:id="@+id/videoPreview"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/audioName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="audio_file.3gp"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/playAudio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reproducir"
+        android:visibility="gone"/>
+</LinearLayout>

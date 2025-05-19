@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <include layout="@layout/top_bar"/>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/barHeight"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/allFilterButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/filter_buttons_height"
+            android:layout_weight="1"
+            android:backgroundTint="@color/turquoise"
+            android:fontFamily="@font/lasiver_medium"
+            android:text="@string/all"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_filter_buttons_size" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="2" />
+
+        <Button
+            android:id="@+id/photoFilterButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/filter_buttons_height"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:fontFamily="@font/lasiver_medium"
+            android:text="@string/photo"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_filter_buttons_size" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="2" />
+
+        <Button
+            android:id="@+id/videoFilterButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/filter_buttons_height"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:fontFamily="@font/lasiver_medium"
+            android:text="@string/video"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_filter_buttons_size" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="2" />
+
+        <Button
+            android:id="@+id/audioFilterButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/filter_buttons_height"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:fontFamily="@font/lasiver_medium"
+            android:text="@string/audio"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_filter_buttons_size" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewFiles"
+        android:layout_marginTop="120dp"
+        android:layout_marginBottom="@dimen/barHeight"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_files"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include layout="@layout/navigation_bar"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

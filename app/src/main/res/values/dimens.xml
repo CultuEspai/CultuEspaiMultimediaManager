@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="barHeight">70dp</dimen>
+    <dimen name="navBarIcon">40dp</dimen>
+    <dimen name="text_filter_buttons_size">15sp</dimen>
+    <dimen name="filter_buttons_height">50dp</dimen>
+</resources>

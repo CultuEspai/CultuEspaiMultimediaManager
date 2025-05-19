@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">CultuEspaiMultimediaManager</string>
+    <string name="logo">logo</string>
+    <string name="audio">Audio</string>
+    <string name="video">Video</string>
+    <string name="photo">Photo</string>
+    <string name="all">All</string>
+    <string name="no_files">No files.</string>
+</resources>

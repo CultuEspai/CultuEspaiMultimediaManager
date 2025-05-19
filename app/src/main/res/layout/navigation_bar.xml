@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigationBarConstraint"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/barHeight"
+    android:background="@color/deepBlue"
+    android:foregroundGravity="center"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
+
+    <View
+        android:id="@+id/topBorder"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/navPhotoIcon"
+        android:layout_width="@dimen/navBarIcon"
+        android:layout_height="@dimen/navBarIcon"
+        android:src="@drawable/photo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/navVideoIcon" />
+
+    <ImageView
+        android:id="@+id/navVideoIcon"
+        android:layout_width="@dimen/navBarIcon"
+        android:layout_height="@dimen/navBarIcon"
+        android:src="@drawable/video"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/navPhotoIcon"
+        app:layout_constraintEnd_toStartOf="@id/navAudioIcon" />
+
+    <ImageView
+        android:id="@+id/navAudioIcon"
+        android:layout_width="@dimen/navBarIcon"
+        android:layout_height="@dimen/navBarIcon"
+        android:src="@drawable/audio"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/navVideoIcon"
+        app:layout_constraintEnd_toStartOf="@id/navFilesIcon" />
+
+    <ImageView
+        android:id="@+id/navFilesIcon"
+        android:layout_width="@dimen/navBarIcon"
+        android:layout_height="@dimen/navBarIcon"
+        android:src="@drawable/file"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/navAudioIcon"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
