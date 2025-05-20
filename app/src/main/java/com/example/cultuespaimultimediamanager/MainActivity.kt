@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity() {
         val videoButton = findViewById<ImageView>(R.id.navVideoIcon)
         val audioButton = findViewById<ImageView>(R.id.navAudioIcon)
         val filesButton = findViewById<ImageView>(R.id.navFilesIcon)
+        val deleteButton = findViewById<ImageView>(R.id.navDeleteIcon)
 
         val allButton = findViewById<Button>(R.id.allFilterButton)
         val photoFilterButton = findViewById<Button>(R.id.photoFilterButton)
@@ -119,11 +120,20 @@ class MainActivity : AppCompatActivity() {
         photoFilterButton.setOnClickListener { filterMedia(MediaType.PHOTO) }
         videoFilterButton.setOnClickListener { filterMedia(MediaType.VIDEO) }
         audioFilterButton.setOnClickListener { filterMedia(MediaType.AUDIO) }
+        deleteButton.setOnClickListener {
+            if (adapter.selectionMode) {
+                deleteSelectedMedia()
+            } else {
+                toggleSelectionMode()
+            }
+        }
+
 
         adapter = MediaAdapter(this, mediaList)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewFiles)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+
     }
 
     private fun openDeviceGallery() {
@@ -276,6 +286,29 @@ class MainActivity : AppCompatActivity() {
             permissionCallback = onGranted
         }
     }
+
+    private fun toggleSelectionMode() {
+        adapter.selectionMode = !adapter.selectionMode
+        if (!adapter.selectionMode) {
+            fullMediaList.forEach { it.isSelected = false }
+            mediaList.forEach { it.isSelected = false }
+        }
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun deleteSelectedMedia() {
+        val toRemove = mediaList.filter { it.isSelected }
+        for (item in toRemove) {
+            val file = File(Uri.parse(item.uri).path ?: "")
+            if (file.exists()) file.delete()
+            fullMediaList.remove(item)
+        }
+        mediaList.removeAll(toRemove)
+        saveMediaListToStorage()
+        toggleSelectionMode()
+        adapter.notifyDataSetChanged()
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()

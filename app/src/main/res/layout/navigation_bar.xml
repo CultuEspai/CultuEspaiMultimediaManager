@@ -57,6 +57,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/navAudioIcon"
+        app:layout_constraintEnd_toStartOf="@id/navDeleteIcon" />
+    <ImageView
+        android:id="@+id/navDeleteIcon"
+        android:layout_width="@dimen/navBarIcon"
+        android:layout_height="@dimen/navBarIcon"
+        android:src="@drawable/trash"
+        android:contentDescription="@string/delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/navFilesIcon"
         app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
