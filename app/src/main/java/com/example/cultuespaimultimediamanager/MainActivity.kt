@@ -111,15 +111,31 @@ class MainActivity : AppCompatActivity() {
         val videoFilterButton = findViewById<Button>(R.id.videoFilterButton)
         val audioFilterButton = findViewById<Button>(R.id.audioFilterButton)
 
+        val filterButtons = listOf(allButton, photoFilterButton, videoFilterButton, audioFilterButton)
+
+
         photoButton.setOnClickListener { capturePhoto() }
         videoButton.setOnClickListener { captureVideo() }
         audioButton.setOnClickListener { recordAudio() }
         filesButton.setOnClickListener { openDeviceGallery() }
 
-        allButton.setOnClickListener { filterMedia(null) }
-        photoFilterButton.setOnClickListener { filterMedia(MediaType.PHOTO) }
-        videoFilterButton.setOnClickListener { filterMedia(MediaType.VIDEO) }
-        audioFilterButton.setOnClickListener { filterMedia(MediaType.AUDIO) }
+        allButton.setOnClickListener {
+            filterMedia(null)
+            updateFilterButtonColors(allButton, filterButtons)
+        }
+        photoFilterButton.setOnClickListener {
+            filterMedia(MediaType.PHOTO)
+            updateFilterButtonColors(photoFilterButton, filterButtons)
+        }
+        videoFilterButton.setOnClickListener {
+            filterMedia(MediaType.VIDEO)
+            updateFilterButtonColors(videoFilterButton, filterButtons)
+        }
+        audioFilterButton.setOnClickListener {
+            filterMedia(MediaType.AUDIO)
+            updateFilterButtonColors(audioFilterButton, filterButtons)
+        }
+
         deleteButton.setOnClickListener {
             if (adapter.selectionMode) {
                 deleteSelectedMedia()
@@ -134,6 +150,15 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+    }
+
+    private fun updateFilterButtonColors(activeButton: Button, allButtons: List<Button>) {
+        allButtons.forEach {
+            it.setBackgroundColor(ContextCompat.getColor(this, R.color.filter_inactive_bg))
+            it.setTextColor(ContextCompat.getColor(this, R.color.filter_inactive_text))
+        }
+        activeButton.setBackgroundColor(ContextCompat.getColor(this, R.color.filter_active_bg))
+        activeButton.setTextColor(ContextCompat.getColor(this, R.color.filter_active_text))
     }
 
     private fun openDeviceGallery() {
@@ -289,7 +314,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun toggleSelectionMode() {
         adapter.selectionMode = !adapter.selectionMode
-        if (!adapter.selectionMode) {
+
+        val deleteButton = findViewById<ImageView>(R.id.navDeleteIcon)
+
+        if (adapter.selectionMode){
+            deleteButton.setImageResource(R.drawable.trash_b)
+        }
+        else{
+            deleteButton.setImageResource(R.drawable.trash)
             fullMediaList.forEach { it.isSelected = false }
             mediaList.forEach { it.isSelected = false }
         }

@@ -4,4 +4,8 @@
     <color name="white">#F0F0F0</color>
     <color name="deepBlue">#0E4853</color>
     <color name="turquoise">#41B7A7</color>
+    <color name="filter_active_bg">@color/turquoise</color>
+    <color name="filter_active_text">@color/white</color>
+    <color name="filter_inactive_bg">@color/white</color>
+    <color name="filter_inactive_text">@color/black</color>
 </resources>
